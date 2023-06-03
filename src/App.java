@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class App {
@@ -5,15 +6,39 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         System.out.println("***** Welcome to Password Generator *****");
 
-        int passwordLength = getPasswordLength(scanner);
+        char[] letters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+        int[] numbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        char[] symbols = {'@','#', '$', '%', '&', '!', '^', '?'};
+        char[] ambiguous = {'{','}','[',']','(',')','/','\\','*',';',':','.','~',',','<','>'};
 
-        String shouldHaveSymbols = getShouldHaveSymbols(scanner);
+        int passwordLength = getPasswordLength();
+        boolean shouldIncludeNumbers = getYesOrNoAnswer("Include numbers (y/n): ");
+        boolean shouldIncludeSymbols = getYesOrNoAnswer( "Include symbols (@ # $ %) (y/n): ");
+        boolean shouldIncludeLowercased = getYesOrNoAnswer("Include lowercased (y/n): "); 
+        boolean shouldIncludeUppercased = getYesOrNoAnswer("Include uppercased (y/n): ");
+        boolean shouldExcludeAmbiguous = getYesOrNoAnswer("Exclude ambiguous characters ({} [] () /\\ \" ' * ; : . ~ , <> ) (y/n): "); 
+        
+        Random randomNum = new Random();
+        
+        String newPass = "";
+        while (true) {
 
-        System.out.println("Getting out! " + shouldHaveSymbols);
+            newPass += letters[randomNum.nextInt(letters.length)];
+            if(shouldIncludeNumbers){
+                newPass += numbers[randomNum.nextInt(numbers.length)];
+            }
+
+            if (newPass.length() == passwordLength) {
+                System.out.println("generated password =>" + newPass);
+                break;
+            }
+        }
+
 
     }
 
-    static int getPasswordLength(Scanner scanner) throws Exception {
+    static int getPasswordLength() throws Exception {
+        Scanner scanner = new Scanner(System.in);
         int passwordLength = 0;
         while (true){
             try {
@@ -28,7 +53,7 @@ public class App {
                 System.out.println("-------------------------------------------------------");
             } catch (Exception e) {
                 System.out.println("******************************************");
-                System.out.println("Invalid character! Input must be a number.");
+                System.out.println("Invalid type of character!");
                 System.out.println("******************************************");
                 // Clear scanner buffer
                 scanner.nextLine();
@@ -36,30 +61,19 @@ public class App {
         }
     }
 
-    static String getShouldHaveSymbols(Scanner scanner) throws Exception {
-        
+    static boolean getYesOrNoAnswer(String question) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+        String userAnswer;
         while (true){
-            try {
-                System.out.print("Include symbols (@ # $ %) ? (y/n): ");
-                // Clear scanner buffer
-                scanner.nextLine();
-                String shouldHaveSymbols = scanner.nextLine();
-
-                if (shouldHaveSymbols.equals("y") || shouldHaveSymbols.equals("n")){
-                    return shouldHaveSymbols;
-                }
-                
-                System.out.println("-------------------------------------------------------");
-                System.out.println("Invalid letter! Please enter 'y' or 'n'.");
-                System.out.println("-------------------------------------------------------");
-                scanner.nextLine();
-            } catch (Exception e) {
-                System.out.println("******************************************");
-                System.out.println("Invalid character! Input must be a letter.");
-                System.out.println("******************************************");
-                // Clear scanner buffer
-                scanner.nextLine();
+            System.out.print(question);
+            userAnswer = scanner.nextLine();
+            
+            if (userAnswer.equals("y") || userAnswer.equals("n")){
+                return userAnswer.equals("y") ? true : false;
             }
+            System.out.println("----------------------------------------");
+            System.out.println("Invalid letter! Please enter 'y' or 'n'.");
+            System.out.println("----------------------------------------");
         }
     }
 }
